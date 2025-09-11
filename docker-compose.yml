@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: campus
+      POSTGRES_PASSWORD: campus
+      POSTGRES_DB: campus_jobs
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+volumes:
+  dbdata:
