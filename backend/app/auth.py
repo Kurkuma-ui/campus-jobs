@@ -46,3 +46,37 @@ def login(body: UserLogin, db: Session = Depends(get_db)):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid credentials")
     token = make_token({"sub": str(user.id), "email": user.email, "role": user.role})
     return Token(access_token=token)
+
+
+
+
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from jose import JWTError
+from fastapi import Depends
+
+security = HTTPBearer(auto_error=False)
+
+def decode_token(token: str) -> dict:
+    try:
+        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except JWTError:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid token")
+
+def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+    db: Session = Depends(get_db),
+) -> User:
+    if not credentials:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Not authenticated")
+    token = credentials.credentials  # сам JWT без "Bearer "
+    payload = decode_token(token)
+    user_id = int(payload.get("sub", "0"))
+    user = db.query(User).get(user_id)
+    if not user:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "User not found")
+    return user
+
+def require_student(user: User = Depends(get_current_user)) -> User:
+    if user.role != "student":
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Student role required")
+    return user

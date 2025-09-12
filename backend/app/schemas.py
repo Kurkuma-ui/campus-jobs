@@ -20,3 +20,36 @@ class UserOut(BaseModel):
     role: str
     class Config:
         from_attributes = True
+
+
+from typing import Optional, List
+
+class VacancyOut(BaseModel):
+    id: int
+    org_id: int
+    title: str
+    description: str
+    employment_type: Optional[str] = None
+    location: Optional[str] = None
+    is_active: bool
+    class Config:
+        from_attributes = True
+
+class VacanciesPage(BaseModel):
+    items: List[VacancyOut]
+    total: int
+    limit: int
+    offset: int
+
+class ApplicationCreate(BaseModel):
+    vacancy_id: int
+    cover_letter: Optional[str] = None
+
+class ApplicationOut(BaseModel):
+    id: int
+    vacancy_id: int
+    student_id: int
+    status: str
+    cover_letter: Optional[str] = None
+    class Config:
+        from_attributes = True
