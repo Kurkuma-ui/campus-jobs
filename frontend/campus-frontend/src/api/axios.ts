@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const api = axios.create({ baseURL: 'http://localhost:8000' });
+// фронт и бэк будут на одном домене, а API отдано по /api через nginx
+const api = axios.create({ baseURL: '/api' });
 
 api.interceptors.request.use((cfg) => {
   const t = localStorage.getItem('token');

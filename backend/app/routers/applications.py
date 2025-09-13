@@ -14,7 +14,7 @@ def create_application(
     current_user: User = Depends(require_student),
 ):
     # проверим, что вакансия существует и активна
-    vac = db.query(Vacancy).get(payload.vacancy_id)
+    vac = db.get(Vacancy, payload.vacancy_id)
     if not vac or not vac.is_active:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Vacancy is not available")
 

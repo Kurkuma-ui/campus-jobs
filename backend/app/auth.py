@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from jose import jwt
@@ -22,7 +22,7 @@ def verify_pwd(p: str, h: str) -> bool: return pwd_context.verify(p, h)
 
 def make_token(data: dict, minutes: int = ACCESS_MIN) -> str:
     to_encode = data.copy()
-    to_encode["exp"] = datetime.utcnow() + timedelta(minutes=minutes)
+    to_encode["exp"] = datetime.now(timezone.utc) + timedelta(minutes=minutes)
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 @router.post("/register", response_model=Token, status_code=201)
@@ -71,7 +71,7 @@ def get_current_user(
     token = credentials.credentials  # сам JWT без "Bearer "
     payload = decode_token(token)
     user_id = int(payload.get("sub", "0"))
-    user = db.query(User).get(user_id)
+    user = db.get(User, user_id)
     if not user:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "User not found")
     return user

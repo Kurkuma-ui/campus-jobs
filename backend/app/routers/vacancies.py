@@ -34,7 +34,7 @@ def list_vacancies(
 
 @router.get("/{vacancy_id}", response_model=VacancyOut)
 def get_vacancy(vacancy_id: int, db: Session = Depends(get_db)):
-    vac = db.query(Vacancy).get(vacancy_id)
+    vac = db.get(Vacancy, vacancy_id)
     if not vac:
         from fastapi import HTTPException, status
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Vacancy not found")

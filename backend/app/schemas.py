@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 class UserRegister(BaseModel):
     email: EmailStr
@@ -18,8 +18,7 @@ class UserOut(BaseModel):
     email: EmailStr
     full_name: str
     role: str
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 from typing import Optional, List
@@ -32,8 +31,7 @@ class VacancyOut(BaseModel):
     employment_type: Optional[str] = None
     location: Optional[str] = None
     is_active: bool
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class VacanciesPage(BaseModel):
     items: List[VacancyOut]
@@ -51,5 +49,4 @@ class ApplicationOut(BaseModel):
     student_id: int
     status: str
     cover_letter: Optional[str] = None
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

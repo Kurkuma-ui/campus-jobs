@@ -1,4 +1,5 @@
 version: "3.9"
+
 services:
   db:
     image: postgres:15
@@ -10,5 +11,33 @@ services:
       - "5432:5432"
     volumes:
       - dbdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U campus -d campus_jobs"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: campus-jobs-backend
+    environment:
+      SECRET_KEY: ${SECRET_KEY:-please-change-me}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://campus:campus@db:5432/campus_jobs}
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend/campus-frontend
+      dockerfile: Dockerfile
+    container_name: campus-jobs-frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"   # фронт доступен на http://localhost:8080
+
 volumes:
   dbdata:

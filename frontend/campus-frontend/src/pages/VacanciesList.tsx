@@ -56,9 +56,9 @@ export default function VacanciesList() {
                   {v.location ?? '—'} · {v.employment_type ?? '—'}
                 </Card.Subtitle>
                 <Card.Text>{v.description.slice(0, 120)}…</Card.Text>
-                <Button as={Link} to={`/vacancies/${v.id}`} variant="primary">
-                  Подробнее
-                </Button>
+                <Link to={`/vacancies/${v.id}`} className="btn btn-primary">
+				Подробнее
+				</Link>
               </Card.Body>
             </Card>
           </Col>
